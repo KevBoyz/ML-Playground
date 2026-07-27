@@ -1,0 +1,54 @@
+imputation:
+  - name: mean
+  - name: median
+  - name: mode
+  - name: constant
+  - name: knn
+    params:
+      n_neighbors: 5
+
+outliers:
+  - name: none
+  - name: iqr
+    params:
+      multiplier: 1.5
+  - name: zscore
+    params:
+      threshold: 3.0
+
+transformation:
+  - name: none
+  - name: log
+  - name: boxcox
+  - name: yeojohnson
+
+scaling:
+  - name: standard
+  - name: robust
+  - name: minmax
+  - name: none
+
+encoding:
+  - name: onehot
+  - name: ordinal
+
+feature_selection:
+  - name: none
+  - name: variance_threshold
+    params:
+      threshold: 0.01
+  - name: mutual_info
+    params:
+      k: 10
+  - name: f_classif
+    params:
+      k: 10
+
+dimensionality:
+  - name: none
+  - name: pca
+    params:
+      n_components: 0.95
+  - name: kernel_pca
+    params:
+      n_components: 0.95
