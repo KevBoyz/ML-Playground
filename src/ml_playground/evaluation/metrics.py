@@ -22,6 +22,18 @@ CLASSIFICATION = {
     "precision": precision_score,
     "recall": recall_score,
     "f1": f1_score,
+    "precision_macro": lambda y, p: precision_score(
+        y, p, average="macro", zero_division=0
+    ),
+    "precision_weighted": lambda y, p: precision_score(
+        y, p, average="weighted", zero_division=0
+    ),
+    "recall_macro": lambda y, p: recall_score(
+        y, p, average="macro", zero_division=0
+    ),
+    "recall_weighted": lambda y, p: recall_score(
+        y, p, average="weighted", zero_division=0
+    ),
     "f1_macro": lambda y, p: f1_score(y, p, average="macro"),
     "f1_weighted": lambda y, p: f1_score(y, p, average="weighted"),
     "roc_auc": roc_auc_score,
@@ -48,6 +60,7 @@ def compute_metrics(
     *,
     task="classification",
     y_score=None,
+    y_proba=None,
 ):
     if task == "classification":
         registry = CLASSIFICATION
@@ -59,8 +72,27 @@ def compute_metrics(
         fn = registry.get(name)
         if fn is None:
             continue
-        if name in ("roc_auc", "log_loss") and y_score is not None:
-            results[name] = fn(y_true, y_score)
+        if name == "roc_auc" and y_score is not None:
+            results[name] = _roc_auc(y_true, y_score)
+        elif name == "log_loss" and y_proba is not None:
+            results[name] = log_loss(y_true, y_proba)
         else:
-            results[name] = fn(y_true, y_pred)
+            try:
+                results[name] = fn(y_true, y_pred)
+            except ValueError:
+                if name in {"precision", "recall", "f1"}:
+                    results[name] = {
+                        "precision": precision_score,
+                        "recall": recall_score,
+                        "f1": f1_score,
+                    }[name](y_true, y_pred, average="weighted", zero_division=0)
+                else:
+                    raise
     return results
+
+
+def _roc_auc(y_true, y_score):
+    scores = np.asarray(y_score)
+    if scores.ndim == 1 or scores.shape[1] == 2:
+        return roc_auc_score(y_true, scores if scores.ndim == 1 else scores[:, 1])
+    return roc_auc_score(y_true, scores, multi_class="ovr", average="macro")

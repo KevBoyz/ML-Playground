@@ -1,0 +1,17 @@
+numeric:
+  steps:
+    - name: imputation
+      category: imputation
+      method: median
+    - name: scaling
+      category: scaling
+      method: none
+
+categorical:
+  steps:
+    - name: imputation
+      category: imputation
+      method: mode
+    - name: encoding
+      category: encoding
+      method: onehot

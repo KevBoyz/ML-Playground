@@ -25,18 +25,19 @@ SCALING = {
     "standard": StandardScaler,
     "robust": RobustScaler,
     "minmax": MinMaxScaler,
+    "none": "passthrough",
 }
 
 ENCODING = {
-    "onehot": OneHotEncoder,
+    "onehot": (OneHotEncoder, {"handle_unknown": "ignore"}),
     "ordinal": OrdinalEncoder,
 }
 
 TRANSFORMATION = {
     "none": "passthrough",
-    "log": None,
-    "boxcox": PowerTransformer,
-    "yeojohnson": PowerTransformer,
+    "log": (FunctionTransformer, {"func": np.log1p}),
+    "boxcox": (PowerTransformer, {"method": "box-cox"}),
+    "yeojohnson": (PowerTransformer, {"method": "yeo-johnson"}),
 }
 
 FEATURE_SELECTION = {
@@ -91,6 +92,7 @@ class ZScoreRemover:
 
 
 OUTLIERS = {
+    "none": "passthrough",
     "iqr": IQRRemover,
     "zscore": ZScoreRemover,
 }
@@ -113,9 +115,9 @@ def get_transformer(category: str, method: str, params: dict | None = None):
     if cat is None:
         raise ValueError(f"Categoria desconhecida: {category}")
 
-    entry = cat.get(method)
-    if entry is None:
+    if method not in cat:
         raise ValueError(f"Método '{method}' não encontrado em {category}")
+    entry = cat[method]
 
     if entry == "passthrough":
         return "passthrough"
@@ -128,4 +130,7 @@ def get_transformer(category: str, method: str, params: dict | None = None):
     if isinstance(entry, type):
         return entry(**(params or {}))
 
-    return entry
+    if callable(entry):
+        return entry(**(params or {}))
+
+    raise TypeError(f"Registro inválido para {category}.{method}: {entry!r}")

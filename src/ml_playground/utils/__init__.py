@@ -3,16 +3,16 @@ import time
 from pathlib import Path
 
 
-def setup_logger(name: str, script_name: str) -> logging.Logger:
+def setup_logger(name: str, script_name: str, log_dir: str | Path = "logs") -> logging.Logger:
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
     logger.handlers.clear()
 
-    log_dir = Path("logs")
-    log_dir.mkdir(exist_ok=True)
+    log_dir = Path(log_dir)
+    log_dir.mkdir(parents=True, exist_ok=True)
 
     fh = logging.FileHandler(log_dir / f"{script_name}.log", mode="w", encoding="utf-8")
-    fh.setLevel(logging.INFO)
+    fh.setLevel(logging.WARNING)
     fh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
     logger.addHandler(fh)
 
@@ -27,12 +27,11 @@ def setup_logger(name: str, script_name: str) -> logging.Logger:
 def log_summary(
     logger: logging.Logger, processed: int, passed: int, failed: int, skipped: int = 0
 ):
-    logger.info("--- Summary ---")
-    logger.info(f"Total processed: {processed}")
-    logger.info(f"Passed: {passed}")
-    logger.info(f"Failed: {failed}")
-    if skipped:
-        logger.info(f"Skipped: {skipped}")
+    logger.warning("--- Summary ---")
+    logger.warning(f"Total processed: {processed}")
+    logger.warning(f"Passed: {passed}")
+    logger.warning(f"Failed: {failed}")
+    logger.warning(f"Skipped: {skipped}")
 
 
 class Timer:
@@ -44,4 +43,4 @@ class Timer:
         return time.perf_counter() - self._start
 
     def finish(self):
-        self._logger.info(f"Execution time: {self.elapsed():.2f}s")
+        self._logger.warning(f"Execution time: {self.elapsed():.2f}s")

@@ -32,6 +32,52 @@ def build_pipeline(config: list[dict] | dict) -> Pipeline:
     return Pipeline(pipeline_steps)
 
 
+def build_preprocessor(config: dict | list[dict], X) -> ColumnTransformer | Pipeline:
+    """Build a typed preprocessor that fits only inside each training split."""
+
+    if isinstance(config, list):
+        return build_pipeline(config)
+
+    if not isinstance(config, dict):
+        raise TypeError("A configuração de preprocessing deve ser um mapa ou lista")
+
+    if not any(key in config for key in ("numeric", "categorical")):
+        return build_pipeline(config)
+
+    numeric_columns, categorical_columns = _column_groups(X)
+    transformers = []
+    for branch, columns in (
+        ("numeric", numeric_columns),
+        ("categorical", categorical_columns),
+    ):
+        if not columns:
+            continue
+        branch_config = config.get(branch, {}) or {}
+        steps = branch_config.get("steps", [])
+        transformers.append((branch, build_pipeline(steps), columns))
+
+    if not transformers:
+        return Pipeline([("passthrough", "passthrough")])
+    return ColumnTransformer(transformers, remainder="drop")
+
+
+def build_model_pipeline(config: dict | list[dict], X, model) -> Pipeline:
+    """Compose preprocessing and estimator into one fitted artifact."""
+
+    preprocessor = build_preprocessor(config, X)
+    return Pipeline([("preprocessing", preprocessor), ("model", model)])
+
+
+def _column_groups(X) -> tuple[list, list]:
+    if hasattr(X, "select_dtypes"):
+        numeric = X.select_dtypes(include=["number"]).columns.tolist()
+        categorical = [column for column in X.columns if column not in numeric]
+        return numeric, categorical
+
+    n_columns = getattr(X, "shape", (0, 0))[1]
+    return list(range(n_columns)), []
+
+
 def _flat_to_steps(flat: dict) -> list[dict]:
     steps = []
     for category, cfg in flat.items():

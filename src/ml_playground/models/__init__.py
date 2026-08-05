@@ -10,12 +10,15 @@ def _load():
     from sklearn.linear_model import LogisticRegression
     from sklearn.neighbors import KNeighborsClassifier
     from sklearn.svm import SVC
+    from sklearn.tree import DecisionTreeClassifier
     from xgboost import XGBClassifier
 
     _registry = {
         "random_forest": RandomForestClassifier,
         "svm": SVC,
         "knn": KNeighborsClassifier,
+        "decision_tree": DecisionTreeClassifier,
+        "logistic_regression": LogisticRegression,
         "logistic": LogisticRegression,
         "xgboost": XGBClassifier,
         "lightgbm": LGBMClassifier,

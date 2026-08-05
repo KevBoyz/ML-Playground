@@ -1,0 +1,12 @@
+classification:
+  names:
+    - accuracy
+    - precision_macro
+    - recall_macro
+    - f1_macro
+    - f1_weighted
+    - roc_auc
+    - log_loss
+    - kappa
+    - mcc
+  primary: f1_macro
