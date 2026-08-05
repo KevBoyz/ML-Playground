@@ -1,0 +1,18 @@
+views:
+  common:
+    - name: model_comparison
+      enabled: true
+      scope: candidates
+      params:
+        metric: rmse
+
+  regression:
+    - name: predicted_vs_actual
+      enabled: true
+      scope: best
+    - name: residuals_vs_fitted
+      enabled: true
+      scope: best
+    - name: learning_curve
+      enabled: false
+      scope: best

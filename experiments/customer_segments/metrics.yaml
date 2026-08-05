@@ -1,0 +1,8 @@
+clustering:
+  names:
+    - silhouette
+    - davies_bouldin
+    - inertia
+    - cluster_count
+    - noise_ratio
+  primary: silhouette

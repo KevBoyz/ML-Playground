@@ -1,0 +1,16 @@
+models:
+  - name: kmeans
+    params:
+      n_clusters: [2, 3, 4]
+      n_init: [10]
+      random_state: [42]
+
+  - name: dbscan
+    params:
+      eps: [0.45, 0.65]
+      min_samples: [3]
+
+  - name: agglomerative
+    params:
+      n_clusters: [2, 3, 4]
+      linkage: [ward]

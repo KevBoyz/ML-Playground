@@ -7,10 +7,16 @@ from ml_playground.models import get_model
 
 def test_discover_and_load_named_experiment():
     paths = discover_experiments("experiments")
-    assert {path.name for path in paths} >= {"iris_baseline", "iris_no_scaling"}
+    by_name = {path.name: path for path in paths}
+    assert set(by_name) >= {
+        "customer_segments",
+        "iris_baseline",
+        "iris_no_scaling",
+        "salary_regression",
+    }
 
-    config = load_experiment(paths[0])
-    assert config["experiment_name"] == paths[0].name
+    config = load_experiment(by_name["iris_baseline"])
+    assert config["experiment_name"] == "iris_baseline"
     assert config["task"] == "classification"
     assert Path(config["data"]["path"]).name == "iris.csv"
     assert {entry["name"] for entry in config["models"]} == {

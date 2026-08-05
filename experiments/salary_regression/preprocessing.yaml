@@ -1,0 +1,5 @@
+numeric:
+  steps:
+    - name: scaling
+      category: scaling
+      method: standard

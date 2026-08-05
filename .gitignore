@@ -225,3 +225,5 @@ logs/*
 cache/*
 models/*
 .python-version
+.vscode
+notebooks/

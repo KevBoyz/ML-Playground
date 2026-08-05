@@ -15,6 +15,7 @@ experiments/
     preprocessing.yaml
     metrics.yaml
     cross_validation.yaml
+    views.yaml
 ```
 
 Execute um experimento com:
@@ -29,9 +30,15 @@ Para executar todas as pastas válidas:
 uv run ml-playground --all
 ```
 
-O MVP suporta KNN, regressão logística, SVM e árvore de decisão. Cada YAML
-define uma parte do experimento; não há dependência de configurações soltas ou
-compartilhadas.
+O núcleo Beta suporta classificação, regressão e clusterização. Os exemplos
+`iris_baseline`, `salary_regression` e `customer_segments` demonstram os três
+fluxos. Cada YAML define uma parte do experimento; não há dependência de
+configurações soltas ou compartilhadas.
+
+`views.yaml` seleciona as figuras de diagnóstico por tarefa. As views P0
+incluem comparação de modelos, matriz de confusão, ROC, observado versus
+predito, resíduos, elbow, silhouette, k-distância, dispersão e tamanho de
+clusters.
 
 ## Saídas
 
@@ -41,8 +48,9 @@ Cada experimento recebe uma árvore própria em `reports/`:
 reports/
   iris_baseline/
     metrics/    # métricas por fold e resumo
-    tables/     # comparação, erros, predições e manifesto
-    figures/    # comparação e matriz de confusão
+    tables/     # comparação, erros, diagnósticos tabulares e manifesto
+    predictions/ # predições supervisionadas ou labels de cluster
+    figures/    # views habilitadas em views.yaml
 models/
   iris_baseline/<run_id>/model.joblib
 logs/
@@ -73,6 +81,6 @@ docs/          - Planos e documentação de implementação
 uv run pytest -q --basetemp .pytest-tmp-local
 ```
 
-O fluxo completo está detalhado em [docs/PLAN.md](docs/PLAN.md). As regras de
-arquitetura e logging estão em `AGENTS.md`. Consulte também o
-[guia de uso](docs/USAGE.md) para conduzir experimentos.
+O roadmap está em [docs/Beta.md](docs/Beta.md). As regras de arquitetura e
+logging estão em `AGENTS.md`. Consulte também o [guia de uso](USAGE.md) para
+conduzir experimentos.

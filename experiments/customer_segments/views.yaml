@@ -1,0 +1,26 @@
+views:
+  common:
+    - name: model_comparison
+      enabled: true
+      scope: candidates
+      params:
+        metric: silhouette
+
+  clustering:
+    - name: elbow_curve
+      enabled: true
+      scope: candidates
+    - name: silhouette_curve
+      enabled: true
+      scope: candidates
+    - name: cluster_scatter
+      enabled: true
+      scope: best
+    - name: cluster_size
+      enabled: true
+      scope: best
+    - name: k_distance
+      enabled: false
+      scope: best
+      params:
+        n_neighbors: 3

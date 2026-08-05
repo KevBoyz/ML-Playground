@@ -1,0 +1,7 @@
+regression:
+  names:
+    - mae
+    - rmse
+    - r2
+    - mape
+  primary: rmse

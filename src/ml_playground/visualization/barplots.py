@@ -17,7 +17,8 @@ def plot_metric_comparison(
     ax.set_xticklabels(model_names, rotation=45, ha="right")
     ax.set_ylabel(metric)
     ax.set_title(title or f"Model comparison — {metric}")
-    ax.set_ylim(0, 1)
+    if values and min(values) >= 0 and max(values) <= 1:
+        ax.set_ylim(0, 1)
     for i, v in enumerate(values):
         ax.text(i, v + 0.01, f"{v:.3f}", ha="center", fontsize=9)
     fig.tight_layout()

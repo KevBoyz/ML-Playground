@@ -119,6 +119,7 @@ def _persist_best_model(config, best_result, run_id):
         metadata={
             "experiment_name": config["experiment_name"],
             "run_id": run_id,
+            "task": config.get("task", "classification"),
             "model": best_result["name"],
             "params": best_result.get("params", {}),
             "metrics": best_result.get("metrics", {}),

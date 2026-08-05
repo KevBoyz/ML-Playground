@@ -1,0 +1,19 @@
+name: customer_segments
+task: clustering
+
+data:
+  path: data/raw/customer_segments.csv
+  features:
+    - annual_income
+    - spending_score
+  random_state: 42
+
+outputs:
+  root: reports
+  save_model: true
+  save_predictions: true
+  figures: true
+
+selection:
+  primary_metric: silhouette
+  direction: maximize

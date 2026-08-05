@@ -1,0 +1,17 @@
+views:
+  common:
+    - name: model_comparison
+      enabled: true
+      scope: candidates
+      params:
+        metric: f1_macro
+
+  classification:
+    - name: confusion_matrix
+      enabled: true
+      scope: best
+      params:
+        normalize: false
+    - name: roc_curve
+      enabled: true
+      scope: best
