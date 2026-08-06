@@ -228,3 +228,4 @@ models/*
 .vscode
 notebooks/
 reports/
+.pytest*

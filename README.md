@@ -18,17 +18,24 @@ experiments/
     views.yaml
 ```
 
-Execute um experimento com:
+Valide dados, confira custo e execute um experimento com:
 
 ```bash
-uv run ml-playground --experiment experiments/iris_baseline
+uv run ml-playground validate --experiment iris_baseline
+uv run ml-playground dry-run --experiment iris_baseline
+uv run ml-playground run --experiment iris_baseline
 ```
 
 Para executar todas as pastas válidas:
 
 ```bash
-uv run ml-playground --all
+uv run ml-playground run --all
 ```
+
+As formas legadas `ml-playground --experiment ...` e `ml-playground --all`
+continuam disponíveis como alias de `run`. Consulte o [guia de uso](USAGE.md)
+para contrato de dados, avaliação final bloqueada, inferência em lote e criação
+de novos estudos.
 
 O núcleo Beta suporta classificação, regressão e clusterização. Os exemplos
 `iris_baseline`, `salary_regression` e `customer_segments` demonstram os três
@@ -81,6 +88,6 @@ docs/          - Planos e documentação de implementação
 uv run pytest -q --basetemp .pytest-tmp-local
 ```
 
-O roadmap está em [docs/Beta.md](docs/Beta.md). As regras de arquitetura e
-logging estão em `AGENTS.md`. Consulte também o [guia de uso](USAGE.md) para
-conduzir experimentos.
+O roadmap implementado neste ciclo está em [docs/upgrades.md](docs/upgrades.md);
+o histórico Beta permanece em [docs/Beta.md](docs/Beta.md). As regras de
+arquitetura e logging estão em `AGENTS.md`.

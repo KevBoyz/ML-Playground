@@ -1,19 +1,44 @@
+contract_version: 1
 name: customer_segments
 task: clustering
 
 data:
   path: data/raw/customer_segments.csv
+  read_options: {}
+  metadata_columns: []
   features:
-    - annual_income
-    - spending_score
+    numeric:
+      - annual_income
+      - spending_score
+  schema:
+    mode: strict
+    dtypes:
+      annual_income: Int64
+      spending_score: Int64
   random_state: 42
 
 outputs:
   root: reports
   save_model: true
   save_predictions: true
+  predictions_format: both
   figures: true
 
 selection:
   primary_metric: silhouette
   direction: maximize
+  tie_breakers: [candidate_id]
+
+provenance:
+  recipe_ref: notebooks/05-Customer_segmentation/main.ipynb
+  recipe_revision: bundled-demo-v1
+  source_description: Pequena amostra de consumo para demonstrar segmentação interna.
+
+search:
+  strategy: grid
+  max_candidates: 4
+
+execution:
+  n_jobs: 1
+  max_wall_time_seconds: 60
+  on_candidate_error: continue

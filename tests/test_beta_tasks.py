@@ -3,6 +3,7 @@ from pathlib import Path
 import polars as pl
 
 from ml_playground.experiments.config import load_experiment
+from ml_playground.experiments.views import merged_predictions
 from ml_playground.experiments.executor import run_experiment
 from ml_playground.experiments.runner import run_grid
 
@@ -165,3 +166,31 @@ def test_regression_and_clustering_reports_include_configured_views(tmp_path):
     assert Path(cluster_result["reports"]["view_silhouette_curve"]).is_file()
     assert Path(cluster_result["reports"]["view_cluster_scatter"]).is_file()
     assert Path(cluster_result["reports"]["view_cluster_size"]).is_file()
+
+
+def test_merged_predictions_deduplicates_repeated_cv_rows():
+    result = {
+        "folds": [
+            {
+                "predictions": {
+                    "row_ids": ["a", "b"],
+                    "y_true": [0, 1],
+                    "y_pred": [0, 1],
+                    "y_score": [0.1, 0.9],
+                }
+            },
+            {
+                "predictions": {
+                    "row_ids": ["a", "c"],
+                    "y_true": [0, 1],
+                    "y_pred": [0, 1],
+                    "y_score": [0.2, 0.8],
+                }
+            },
+        ]
+    }
+
+    predictions = merged_predictions(result)
+
+    assert predictions["row_ids"] == ["a", "b", "c"]
+    assert predictions["y_score"] == [0.1, 0.9, 0.8]

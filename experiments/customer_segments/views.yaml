@@ -26,4 +26,4 @@ views:
       scope: best
       params:
         n_neighbors: 5
-        eps: 0.55
+        eps: 0.6

@@ -11,6 +11,7 @@ from ml_playground.preprocessing.registry import (
     ENCODING,
     TRANSFORMATION,
     FEATURE_SELECTION,
+    FEATURE_ENGINEERING,
     DIMENSIONALITY,
     OUTLIERS,
     IQRRemover,
@@ -83,3 +84,9 @@ def test_zscore_remover():
 def test_outliers_registry():
     assert "iqr" in OUTLIERS
     assert "zscore" in OUTLIERS
+
+
+def test_registry_supports_regression_selection_and_iterative_imputation():
+    assert "iterative" in IMPUTATION
+    assert "f_regression" in FEATURE_SELECTION
+    assert "polynomial" in FEATURE_ENGINEERING

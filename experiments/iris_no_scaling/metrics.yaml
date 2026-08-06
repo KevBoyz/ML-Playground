@@ -1,18 +1,8 @@
 classification:
   names:
     - accuracy
-    - precision
     - precision_macro
-    - precision_weighted
-    - recall
     - recall_macro
-    - recall_weighted
-    - f1
     - f1_macro
-    - f1_weighted
     - roc_auc
-    - log_loss
-    - kappa
-    - mcc
-    - confusion_matrix
   primary: f1_macro

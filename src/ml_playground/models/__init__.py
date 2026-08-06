@@ -9,7 +9,13 @@ _registry: dict[str, type] | None = None
 
 
 MODEL_METADATA: dict[str, dict[str, Any]] = {
+    "dummy_classifier": {
+        "tasks": {"classification"},
+        "predict_proba": True,
+        "baseline": True,
+    },
     "random_forest": {"tasks": {"classification"}, "importance": True},
+    "gaussian_nb": {"tasks": {"classification"}, "predict_proba": True},
     "svm": {
         "tasks": {"classification"},
         "decision_function": True,
@@ -50,15 +56,18 @@ def _load() -> dict[str, type]:
         return _registry
 
     from sklearn.cluster import AgglomerativeClustering, DBSCAN, KMeans
-    from sklearn.dummy import DummyRegressor
+    from sklearn.dummy import DummyClassifier, DummyRegressor
     from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
     from sklearn.linear_model import ElasticNet, Lasso, LinearRegression, LogisticRegression, Ridge
     from sklearn.neighbors import KNeighborsClassifier
+    from sklearn.naive_bayes import GaussianNB
     from sklearn.svm import SVC
     from sklearn.tree import DecisionTreeClassifier
 
     registry = {
+        "dummy_classifier": DummyClassifier,
         "random_forest": RandomForestClassifier,
+        "gaussian_nb": GaussianNB,
         "svm": SVC,
         "knn": KNeighborsClassifier,
         "decision_tree": DecisionTreeClassifier,

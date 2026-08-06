@@ -1,11 +1,7 @@
 clustering:
   names:
     - silhouette
-    - calinski_harabasz
     - davies_bouldin
-    - inertia
     - cluster_count
     - noise_ratio
-    - cluster_size_min
-    - cluster_size_max
   primary: silhouette

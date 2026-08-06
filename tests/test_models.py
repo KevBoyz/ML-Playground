@@ -3,6 +3,7 @@ from lightgbm import LGBMClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
 
@@ -11,6 +12,8 @@ from ml_playground.models import MODELS, get_model
 
 def test_registry_contains_core_models():
     assert "random_forest" in MODELS
+    assert "dummy_classifier" in MODELS
+    assert "gaussian_nb" in MODELS
     assert "svm" in MODELS
     assert "knn" in MODELS
     assert "logistic" in MODELS
@@ -20,6 +23,7 @@ def test_registry_contains_core_models():
 
 def test_registry_maps_to_sklearn_classes():
     assert MODELS["random_forest"] is RandomForestClassifier
+    assert MODELS["gaussian_nb"] is GaussianNB
     assert MODELS["svm"] is SVC
     assert MODELS["knn"] is KNeighborsClassifier
     assert MODELS["logistic"] is LogisticRegression
@@ -50,6 +54,11 @@ def test_get_model_knn():
     model = get_model("knn", {"n_neighbors": 7})
     assert isinstance(model, KNeighborsClassifier)
     assert model.n_neighbors == 7
+
+
+def test_get_model_classification_baselines():
+    assert get_model("dummy_classifier").__class__.__name__ == "DummyClassifier"
+    assert isinstance(get_model("gaussian_nb"), GaussianNB)
 
 
 def test_get_model_logistic():

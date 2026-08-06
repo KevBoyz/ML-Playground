@@ -1,22 +1,60 @@
+contract_version: 1
 name: iris_baseline
 task: classification
 
 data:
   path: data/raw/iris.csv
+  read_options: {}
   target: target
+  metadata_columns: []
   features:
-    - sepal length (cm)
-    - sepal width (cm)
-    - petal length (cm)
-    - petal width (cm)
+    numeric:
+      - sepal length (cm)
+      - sepal width (cm)
+      - petal length (cm)
+      - petal width (cm)
+  schema:
+    mode: strict
+    dtypes:
+      sepal length (cm): Float64
+      sepal width (cm): Float64
+      petal length (cm): Float64
+      petal width (cm): Float64
+      target: Int64
   random_state: 42
+
+evaluation:
+  protocol: development
+  evaluate_final_test: false
+  splitter:
+    name: stratified_kfold
+    n_splits: 3
+    shuffle: true
+    random_state: 42
 
 outputs:
   root: reports
   save_model: true
   save_predictions: true
+  predictions_format: both
   figures: true
 
 selection:
   primary_metric: f1_macro
   direction: maximize
+  tie_breakers: [metric_std, candidate_id]
+  baseline_candidate: dummy_classifier
+
+provenance:
+  recipe_ref: notebooks/more/Supervised/decision_tree-KNN_iris.ipynb
+  recipe_revision: bundled-demo-v1
+  source_description: Pequeno recorte Iris incluído para demonstrar classificação tabular reproduzível.
+
+search:
+  strategy: grid
+  max_candidates: 5
+
+execution:
+  n_jobs: 1
+  max_wall_time_seconds: 60
+  on_candidate_error: continue

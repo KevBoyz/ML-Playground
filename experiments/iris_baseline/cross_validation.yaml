@@ -1,5 +1,4 @@
-method: repeated_stratified_kfold
-n_splits: 5
-n_repeats: 2
+method: stratified_kfold
+n_splits: 3
 shuffle: true
 random_state: 42

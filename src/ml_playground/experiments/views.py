@@ -69,10 +69,20 @@ def write_configured_views(config: dict, results: list[dict], best_result: dict 
 
 
 def merged_predictions(result: dict | None) -> dict | None:
-    """Return holdout predictions or a fold-concatenated representation."""
+    """Return final-test, canonical OOF or non-duplicated fold predictions.
+
+    Repeated CV produces more than one estimate for the same row.  Visual
+    diagnostics must not concatenate those estimates as independent examples,
+    otherwise ROC curves, confusion matrices and residual plots are distorted.
+    """
 
     if not result:
         return None
+    final_test = result.get("final_test")
+    if isinstance(final_test, dict) and final_test.get("predictions"):
+        return final_test["predictions"]
+    if result.get("oof_predictions"):
+        return result["oof_predictions"]
     if result.get("predictions"):
         return result["predictions"]
     folds = result.get("folds", [])
@@ -80,15 +90,36 @@ def merged_predictions(result: dict | None) -> dict | None:
         return None
     merged = {"row_ids": [], "y_true": [], "y_pred": [], "y_score": []}
     has_score = False
+    seen_rows = set()
     for fold in folds:
         predictions = fold.get("predictions", {})
-        for key in ("row_ids", "y_true", "y_pred"):
-            merged[key].extend(predictions.get(key, []))
-        if predictions.get("y_score") is not None:
-            has_score = True
-            merged["y_score"].extend(predictions["y_score"])
+        row_ids = predictions.get("row_ids", [])
+        y_true = predictions.get("y_true", [])
+        y_pred = predictions.get("y_pred", [])
+        y_score = predictions.get("y_score")
+        for index, (row_id, true_value, predicted_value) in enumerate(
+            zip(row_ids, y_true, y_pred)
+        ):
+            marker = _row_marker(row_id)
+            if marker in seen_rows:
+                continue
+            seen_rows.add(marker)
+            merged["row_ids"].append(row_id)
+            merged["y_true"].append(true_value)
+            merged["y_pred"].append(predicted_value)
+            if y_score is not None:
+                has_score = True
+                merged["y_score"].append(y_score[index])
     merged["y_score"] = merged["y_score"] if has_score else None
     return merged
+
+
+def _row_marker(value):
+    try:
+        hash(value)
+    except TypeError:
+        return repr(value)
+    return value
 
 
 def _configured_entries(config: dict, task: str) -> list[dict]:
@@ -306,5 +337,8 @@ def _cluster_size(result, run_id, directory):
 
 
 def _cluster_features(config):
+    prepared = config.get("_prepared_data")
+    if isinstance(prepared, dict) and prepared.get("X") is not None:
+        return prepared["X"]
     frame = auto_read(config["data"]["path"])
     return frame.select(config["data"]["features"]).to_pandas()

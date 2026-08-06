@@ -41,6 +41,9 @@ def build_preprocessor(config: dict | list[dict], X) -> ColumnTransformer | Pipe
     if not isinstance(config, dict):
         raise TypeError("A configuração de preprocessing deve ser um mapa ou lista")
 
+    if "groups" in config:
+        return _build_explicit_groups(config["groups"], X, config.get("remainder", "drop"))
+
     if not any(key in config for key in ("numeric", "categorical")):
         return build_pipeline(config)
 
@@ -50,15 +53,18 @@ def build_preprocessor(config: dict | list[dict], X) -> ColumnTransformer | Pipe
         ("numeric", numeric_columns),
         ("categorical", categorical_columns),
     ):
+        branch_config = config.get(branch, {}) or {}
+        explicit_columns = branch_config.get("columns")
+        if explicit_columns is not None:
+            columns = _validate_columns(explicit_columns, X, branch)
         if not columns:
             continue
-        branch_config = config.get(branch, {}) or {}
         steps = branch_config.get("steps", [])
         transformers.append((branch, build_pipeline(steps), columns))
 
     if not transformers:
         return Pipeline([("passthrough", "passthrough")])
-    return ColumnTransformer(transformers, remainder="drop")
+    return ColumnTransformer(transformers, remainder=config.get("remainder", "drop"))
 
 
 def build_model_pipeline(config: dict | list[dict], X, model) -> Pipeline:
@@ -76,6 +82,45 @@ def _column_groups(X) -> tuple[list, list]:
 
     n_columns = getattr(X, "shape", (0, 0))[1]
     return list(range(n_columns)), []
+
+
+def _build_explicit_groups(groups, X, remainder):
+    if not isinstance(groups, dict) or not groups:
+        raise ValueError("preprocessing.groups deve ser um mapa não vazio")
+
+    transformers = []
+    claimed = set()
+    for name, group in groups.items():
+        if not isinstance(group, dict):
+            raise ValueError(f"preprocessing.groups.{name} deve ser um mapa")
+        columns = _validate_columns(group.get("columns"), X, name)
+        overlap = claimed.intersection(columns)
+        if overlap:
+            raise ValueError(f"Colunas repetidas entre grupos de preprocessing: {sorted(overlap)}")
+        claimed.update(columns)
+        transformers.append((name, build_pipeline(group.get("steps", [])), columns))
+    return ColumnTransformer(transformers, remainder=remainder)
+
+
+def _validate_columns(columns, X, group):
+    if not isinstance(columns, list) or not columns:
+        raise ValueError(f"O grupo {group!r} deve declarar uma lista não vazia de columns")
+    available = list(getattr(X, "columns", []))
+    missing = sorted(set(columns) - set(available))
+    if missing:
+        raise ValueError(f"Colunas ausentes no grupo {group!r}: {missing}")
+    if len(set(columns)) != len(columns):
+        raise ValueError(f"O grupo {group!r} contém colunas duplicadas")
+    return columns
+
+
+def transformed_feature_names(pipeline, input_features) -> list[str]:
+    """Resolve nomes finais quando o preprocessor expõe a API do sklearn."""
+
+    preprocessor = getattr(pipeline, "named_steps", {}).get("preprocessing", pipeline)
+    if hasattr(preprocessor, "get_feature_names_out"):
+        return [str(name) for name in preprocessor.get_feature_names_out(input_features)]
+    return [str(name) for name in input_features]
 
 
 def _flat_to_steps(flat: dict) -> list[dict]:

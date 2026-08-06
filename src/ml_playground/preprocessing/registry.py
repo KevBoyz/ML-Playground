@@ -1,13 +1,15 @@
 import numpy as np
 from sklearn.decomposition import PCA, KernelPCA
+from sklearn.experimental import enable_iterative_imputer  # noqa: F401
 from sklearn.feature_selection import SelectKBest, VarianceThreshold
-from sklearn.feature_selection import mutual_info_classif, f_classif
-from sklearn.impute import KNNImputer, SimpleImputer
+from sklearn.feature_selection import f_classif, f_regression, mutual_info_classif, mutual_info_regression
+from sklearn.impute import IterativeImputer, KNNImputer, SimpleImputer
 from sklearn.preprocessing import (
     FunctionTransformer,
     MinMaxScaler,
     OneHotEncoder,
     OrdinalEncoder,
+    PolynomialFeatures,
     PowerTransformer,
     RobustScaler,
     StandardScaler,
@@ -19,6 +21,7 @@ IMPUTATION = {
     "mode": (SimpleImputer, {"strategy": "most_frequent"}),
     "constant": (SimpleImputer, {"strategy": "constant"}),
     "knn": KNNImputer,
+    "iterative": IterativeImputer,
 }
 
 SCALING = {
@@ -45,6 +48,13 @@ FEATURE_SELECTION = {
     "variance_threshold": VarianceThreshold,
     "mutual_info": lambda k=10: SelectKBest(mutual_info_classif, k=k),
     "f_classif": lambda k=10: SelectKBest(f_classif, k=k),
+    "mutual_info_regression": lambda k=10: SelectKBest(mutual_info_regression, k=k),
+    "f_regression": lambda k=10: SelectKBest(f_regression, k=k),
+}
+
+FEATURE_ENGINEERING = {
+    "polynomial": PolynomialFeatures,
+    "none": "passthrough",
 }
 
 DIMENSIONALITY = {
@@ -105,6 +115,7 @@ def get_registry():
         "encoding": ENCODING,
         "transformation": TRANSFORMATION,
         "feature_selection": FEATURE_SELECTION,
+        "feature_engineering": FEATURE_ENGINEERING,
         "dimensionality": DIMENSIONALITY,
         "outliers": OUTLIERS,
     }
