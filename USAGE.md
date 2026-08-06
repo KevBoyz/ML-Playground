@@ -582,7 +582,7 @@ reports/
       <run_id>_fold_metrics.csv
     tables/
       <run_id>_model_comparison.csv
-      <run_id>_errors.csv
+      <run_id>_errors.csv             # somente quando houver candidatos com erro
       <run_id>_manifest.json
       <run_id>_<model>_confusion_matrix.csv  # classificação
       <run_id>_<model>_residuals.csv         # regressão
@@ -601,7 +601,7 @@ models/
 | `summary.csv` | uma linha por candidato, parâmetros, duração, métricas e erros |
 | `fold_metrics.csv` | métricas e tamanhos por fold; pode estar vazio em holdout ou clusterização |
 | `model_comparison.csv` | valor da métrica principal para cada candidato válido |
-| `errors.csv` | candidatos que falharam, sem abortar o grid inteiro |
+| `errors.csv` | candidatos que falharam, sem abortar o grid inteiro; não é criado quando não há erros |
 | `predictions.csv` | `y_true`, `y_pred` e scores supervisionados, ou `cluster` por linha |
 | tabelas específicas | matriz de confusão, resíduos ou tamanhos dos clusters do vencedor |
 | `manifest.json` | configuração efetiva, melhor resultado, caminhos dos artefatos e status das views |
@@ -711,7 +711,7 @@ views, mantendo o mesmo dataset.
 | `Dataset não encontrado` | caminho relativo resolvido a partir da raiz do projeto | corrija `data.path` ou use caminho absoluto |
 | `Target não encontrada` | nome da coluna não existe no arquivo | revise `data.target` e o cabeçalho do dataset |
 | `Features não encontradas` | lista em `data.features` não corresponde às colunas | corrija os nomes declarados |
-| nenhum vencedor | todos os candidatos falharam ou não produziram a métrica principal | abra `errors.csv`, reduza o grid e confira compatibilidade de modelo/métrica |
+| nenhum vencedor | todos os candidatos falharam ou não produziram a métrica principal | se existir, abra `errors.csv`; reduza o grid e confira compatibilidade de modelo/métrica |
 | ROC ausente | estimador não expõe score/probabilidade ou não há dados válidos | habilite `probability` no SVM quando necessário e verifique `manifest.json` |
 | silhouette indisponível | DBSCAN gerou apenas ruído/um grupo ou um label por linha | ajuste `eps`, `min_samples`, features ou escala |
 | `cluster_scatter` ignorada | não há exatamente duas features selecionáveis | informe `params.features: [coluna_x, coluna_y]` |

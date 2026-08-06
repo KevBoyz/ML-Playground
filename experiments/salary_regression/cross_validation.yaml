@@ -1,4 +1,5 @@
-method: kfold
+method: repeated_kfold
 n_splits: 5
+n_repeats: 3
 shuffle: true
 random_state: 42

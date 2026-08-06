@@ -16,11 +16,14 @@ views:
     - name: cluster_scatter
       enabled: true
       scope: best
+      params:
+        features: [annual_income, spending_score]
     - name: cluster_size
       enabled: true
       scope: best
     - name: k_distance
-      enabled: false
+      enabled: true
       scope: best
       params:
-        n_neighbors: 3
+        n_neighbors: 5
+        eps: 0.55

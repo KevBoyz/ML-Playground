@@ -227,3 +227,4 @@ models/*
 .python-version
 .vscode
 notebooks/
+reports/

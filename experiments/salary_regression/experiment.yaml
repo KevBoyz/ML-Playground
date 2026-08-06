@@ -4,6 +4,9 @@ task: regression
 data:
   path: data/raw/salary_regression.csv
   target: annual_salary
+  features:
+    - years_experience
+    - projects_delivered
   random_state: 42
 
 outputs:

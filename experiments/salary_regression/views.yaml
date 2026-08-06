@@ -13,6 +13,3 @@ views:
     - name: residuals_vs_fitted
       enabled: true
       scope: best
-    - name: learning_curve
-      enabled: false
-      scope: best

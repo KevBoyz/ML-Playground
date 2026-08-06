@@ -1,7 +1,9 @@
 regression:
   names:
     - mae
+    - mse
     - rmse
     - r2
     - mape
+    - max_error
   primary: rmse

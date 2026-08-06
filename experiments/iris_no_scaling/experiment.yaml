@@ -4,6 +4,11 @@ task: classification
 data:
   path: data/raw/iris.csv
   target: target
+  features:
+    - sepal length (cm)
+    - sepal width (cm)
+    - petal length (cm)
+    - petal width (cm)
   random_state: 42
 
 outputs:

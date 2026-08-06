@@ -69,8 +69,10 @@ def write_experiment_reports(
             config["selection"]["primary_metric"],
             directories["tables"] / f"{run_id}_model_comparison.csv",
         ),
-        "errors": _write_errors(results, directories["tables"] / f"{run_id}_errors.csv"),
     }
+    errors_path = _write_errors(results, directories["tables"] / f"{run_id}_errors.csv")
+    if errors_path is not None:
+        artifacts["errors"] = errors_path
     if config.get("outputs", {}).get("save_predictions", True):
         artifacts.update(_write_predictions(results, directories["predictions"] / f"{run_id}_predictions.csv"))
     if best_result is not None:
@@ -133,7 +135,7 @@ def _write_comparison_table(results, metric: str, path: Path) -> str:
     return _write_dataframe(rows, path)
 
 
-def _write_errors(results, path: Path) -> str:
+def _write_errors(results, path: Path) -> str | None:
     rows = [
         {
             "model": result.get("name", result.get("model", "?")),
@@ -143,6 +145,8 @@ def _write_errors(results, path: Path) -> str:
         for result in results
         if "error" in result
     ]
+    if not rows:
+        return None
     return _write_dataframe(rows, path)
 
 

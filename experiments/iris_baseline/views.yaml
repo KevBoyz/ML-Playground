@@ -15,9 +15,3 @@ views:
     - name: roc_curve
       enabled: true
       scope: best
-    - name: decision_boundary
-      enabled: false
-      scope: best
-      params:
-        projection: pca
-        dimensions: 2

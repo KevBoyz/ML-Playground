@@ -1,5 +1,26 @@
 numeric:
   steps:
+    - name: imputation
+      category: imputation
+      method: median
+    - name: transformation
+      category: transformation
+      method: yeojohnson
+    - name: outliers
+      category: outliers
+      method: zscore
+      params:
+        threshold: 3.0
     - name: scaling
       category: scaling
       method: standard
+    - name: feature_selection
+      category: feature_selection
+      method: variance_threshold
+      params:
+        threshold: 0.0
+    - name: dimensionality
+      category: dimensionality
+      method: pca
+      params:
+        n_components: 0.95

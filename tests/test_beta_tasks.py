@@ -57,10 +57,10 @@ def test_clustering_runner_returns_internal_metrics_and_labels(tmp_path):
 def test_loader_accepts_clustering_without_cross_validation_and_normalizes_views(tmp_path):
     dataset = tmp_path / "customers.csv"
     pl.DataFrame({"income": [1.0, 2.0, 8.0, 9.0], "score": [1.0, 2.0, 8.0, 9.0]}).write_csv(dataset)
-    experiment = tmp_path / "customer_segments"
+    experiment = tmp_path / "cluster_contract"
     experiment.mkdir()
     (experiment / "experiment.yaml").write_text(
-        """name: customer_segments
+        """name: cluster_contract
 task: clustering
 data:
   path: customers.csv

@@ -1,5 +1,21 @@
 numeric:
   steps:
+    - name: imputation
+      category: imputation
+      method: median
+    - name: transformation
+      category: transformation
+      method: yeojohnson
+    - name: outliers
+      category: outliers
+      method: iqr
+      params:
+        multiplier: 1.5
     - name: scaling
       category: scaling
-      method: standard
+      method: robust
+    - name: dimensionality
+      category: dimensionality
+      method: pca
+      params:
+        n_components: 2

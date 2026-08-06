@@ -3,9 +3,27 @@ numeric:
     - name: imputation
       category: imputation
       method: median
+    - name: transformation
+      category: transformation
+      method: none
+    - name: outliers
+      category: outliers
+      method: zscore
+      params:
+        threshold: 3.0
     - name: scaling
       category: scaling
       method: none
+    - name: feature_selection
+      category: feature_selection
+      method: variance_threshold
+      params:
+        threshold: 0.0
+    - name: dimensionality
+      category: dimensionality
+      method: pca
+      params:
+        n_components: 3
 
 categorical:
   steps:
